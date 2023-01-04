@@ -1,0 +1,74 @@
+---
+title: "MATH40005 Coursework Spring 2022"
+author: "Leo JONES, CID: 02036984"
+output: pdf_document
+---
+# Question 1
+
+## Question 1(a)
+
+
+```{r}
+#reading data and creating breaks
+d=read.table("spendingsurvey.txt",header=TRUE,sep=",")
+labels= list("19 and younger","20-29","30-39","40-49","50-59","60 and over")
+cat<-c(0,19,29,39,49,59,100)
+#sorting entries into age ranges
+age=as.numeric(t(d)[2,])
+d$ageranges <- cut(age, breaks = cat)
+#summing the visits over the different ranges and then plotting
+ag=aggregate(d$visits,by =list(d$ageranges),FUN=sum)
+barplot(as.vector(ag$x), names= labels, cex.names = 0.75, col=terrain.colors(6),main="Visits by age group")
+```
+
+
+\clearpage
+
+## Question 1(b)
+```{r}
+#same data as 1(a) but as a pie chart
+pie(as.vector(ag$x), labels= labels, col=terrain.colors(6),main="Visits by age group")
+```
+
+
+
+\clearpage
+
+## Question 1(c)
+```{r}
+#taking the mean of the total spend per visit for each age range
+q1c=aggregate(d$totalspend/d$visits,by= list(d$ageranges), FUN=mean)
+#plotting
+barplot(as.vector(q1c$x), names =labels,cex.names=0.75,col=terrain.colors(6),main="Average spend (£) per visit by age group")
+```
+
+\clearpage
+
+## Question 1(d)
+
+The 30-39 group has the largest proportion of visits however the 50-59 group has the highest average spend.
+
+```{r}
+#taking the mean of the total spend for each age group
+q1d=aggregate(d$totalspend,by= list(d$ageranges), FUN=mean)
+print(q1d)
+```
+
+If you look at the total spend by age group, however, 30-39 has the highest spend, and therefore I would say they are most valuable to the restaurant chain.
+
+\clearpage
+
+## Question 1(e)
+```{r}
+#creating lists of the spends per visit for each age range
+h=aggregate(d$totalspend/d$visits, by =list(d$ageranges), FUN=list)
+#t-test without equality of variances
+t.test(unlist(h$x[2]),unlist(h$x[4]))
+```
+Assuming normality but not equality of variances, the p-value is less than 0.05, which indicates a significant difference. 
+
+We can use the F test to test for equality in the variances:
+
+```{r}
+#F-test to compare two variances
+k
